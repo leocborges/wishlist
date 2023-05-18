@@ -10,6 +10,8 @@ Uma wishlist de produtos.
 - Docker
 - docker compose
 
+## Rodando aplicação
+
 Execute os comandos abaixo para subir a aplicação localmente.
 
 1. `mvnw clean install -DskipTests` (depende da aplicação iniciada para que os testes funcionem)
