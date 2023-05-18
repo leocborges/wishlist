@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  * Product service.
  */
 @Service
-public final class ProductService {
+public class ProductService {
 
     private final ProductRepository products;
 
