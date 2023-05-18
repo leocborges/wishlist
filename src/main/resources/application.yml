@@ -1,0 +1,17 @@
+spring:
+  data:
+    mongodb:
+      host: ${MONGO_URL:localhost}
+      port: 27017
+      database: wishlist
+
+springdoc:
+  api-docs:
+    path: /specs
+  swagger-ui:
+    path: /docs
+    operations-sorter: method
+
+server:
+  servlet:
+    context-path: /api/v1

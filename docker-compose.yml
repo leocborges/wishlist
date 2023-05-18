@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:6-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - wishlist-db:/data/db
+
+  wishlist:
+    container_name: wishlist
+    image: wishlist:latest
+    ports:
+      - '8080:8080'
+    environment:
+      - MONGO_URL=mongodb
+    depends_on:
+      - mongodb
+
+volumes:
+  wishlist-db:
