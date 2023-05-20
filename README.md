@@ -33,7 +33,7 @@ página de relatório em https://reports.cucumber.io.
 
 ## Docs
 
-Após subir a aplicação, a documentação da API está exposta em http://localhost:8080/api/v1/docs.
+Após subir a aplicação, a documentação da API está exposta em http://localhost:8081/api/v1/docs.
 
 ## Checkstyle
 
