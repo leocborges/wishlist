@@ -6,9 +6,7 @@ import com.wishlist.exceptions.NotFoundException;
 import com.wishlist.products.ProductJson;
 import com.wishlist.products.ProductService;
 import java.util.Collection;
-import org.bson.types.ObjectId;
-import org.springframework.data.domain.Example;
-import org.springframework.data.mongodb.core.query.UntypedExampleMatcher;
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 /**
@@ -49,12 +47,13 @@ public final class WishlistService {
      * Adds a product to the user's wishlist.
      * @param pid Product id.
      * @param user User.
-     * @return Resulting id.
      */
-    public ObjectId add(final long pid, final String user) {
+    public void add(final long pid, final String user) {
         this.checkLimit(user);
         this.checkProductExists(pid);
-        return this.wishlists.insert(new Wishlist(pid, user)).getId();
+        final Wishlist wishlist = this.findOpt(user).orElse(new Wishlist(user));
+        wishlist.getProducts().add(pid);
+        this.wishlists.save(wishlist);
     }
 
     /**
@@ -64,12 +63,7 @@ public final class WishlistService {
      * @return True if product is in user's wishlist, false otherwise.
      */
     public boolean exists(final long pid, final String user) {
-        return this.wishlists.exists(
-            Example.of(
-                new Wishlist(pid, user),
-                UntypedExampleMatcher.matching().withIgnoreNullValues()
-            )
-        );
+        return this.find(user).getProducts().contains(pid);
     }
 
     /**
@@ -78,13 +72,9 @@ public final class WishlistService {
      * @return Products.
      */
     public Collection<ProductJson> findAllByUser(final String user) {
-        final Collection<Long> products = this.wishlists.findAll(
-            Example.of(
-                new Wishlist(null, user),
-                UntypedExampleMatcher.matching().withIgnoreNullValues()
-            )
-        ).stream().mapToLong(Wishlist::getPid).boxed().toList();
-        return this.products.findAll(products);
+        return this.products.findAll(
+            this.find(user).getProducts().stream().toList()
+        );
     }
 
     /**
@@ -93,28 +83,34 @@ public final class WishlistService {
      * @param user User.
      */
     public void remove(final Long pid, final String user) {
-        final Wishlist wishlist = this.wishlists.findOne(
-            Example.of(
-                new Wishlist(pid, user),
-                UntypedExampleMatcher.matching().withIgnoreNullValues()
-            )
-        ).orElseThrow(() -> new NotFoundException(Entity.WISHLIST));
-        this.wishlists.delete(wishlist);
+        final Wishlist wishlist = this.find(user);
+        if (!wishlist.getProducts().remove(pid)) {
+            throw new NotFoundException(Entity.PRODUCT);
+        }
+        this.wishlists.save(wishlist);
+    }
+
+    private Optional<Wishlist> findOpt(final String user) {
+        return this.wishlists.findById(user);
+    }
+
+    private Wishlist find(final String user) {
+        return this.findOpt(user)
+            .orElseThrow(() -> new NotFoundException(Entity.WISHLIST));
     }
 
     private void checkLimit(final String user) {
-        final long count = this.wishlists.count(
-            Example.of(
-                new Wishlist(null, user),
-                UntypedExampleMatcher.matching().withIgnoreNullValues()
-            )
+        this.findOpt(user).ifPresent(
+            wishlist -> {
+                final long count = wishlist.getProducts().size();
+                if (count >= WishlistService.WISHLIST_MAX_SIZE) {
+                    throw new BadRequestException(
+                        "Max number of products reached (%d)."
+                            .formatted(WishlistService.WISHLIST_MAX_SIZE)
+                    );
+                }
+            }
         );
-        if (count >= WishlistService.WISHLIST_MAX_SIZE) {
-            throw new BadRequestException(
-                "Max number of products reached (%d)."
-                    .formatted(WishlistService.WISHLIST_MAX_SIZE)
-            );
-        }
     }
 
     private void checkProductExists(final long pid) {

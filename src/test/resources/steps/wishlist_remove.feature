@@ -44,7 +44,7 @@ Feature: Wishlist remove
       "type": "about:blank",
       "title": "Not Found",
       "status": 404,
-      "detail": "Wishlist not found.",
+      "detail": "Product not found.",
       "instance": "/api/v1/wishlists/999"
     }
     """

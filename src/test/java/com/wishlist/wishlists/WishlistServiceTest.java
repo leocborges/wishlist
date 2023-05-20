@@ -5,6 +5,7 @@ import com.wishlist.products.ProductService;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
@@ -13,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.domain.Example;
 
 /**
  * Unit tests for {@link WishlistService}.
@@ -38,13 +38,13 @@ public final class WishlistServiceTest {
         final String user = "fixopqlxb";
         final ProductJson expected = new ProductJson(1L, "mouse", BigDecimal.ONE);
         Mockito
-            .when(this.dao.findAll(Mockito.any(Example.class)))
-            .thenReturn(List.of(new Wishlist(1L, user)));
+            .when(this.dao.findById(Mockito.anyString()))
+            .thenReturn(Optional.of(new Wishlist(user)));
         Mockito
             .when(this.productService.findAll(Mockito.any()))
             .thenReturn(List.of(expected));
         final Collection<ProductJson> products = this.sut.findAllByUser(user);
-        Mockito.verify(this.dao, Mockito.times(1)).findAll(Mockito.any(Example.class));
+        Mockito.verify(this.dao, Mockito.times(1)).findById(Mockito.any());
         Mockito.verify(this.productService, Mockito.times(1)).findAll(Mockito.anyCollection());
         MatcherAssert.assertThat(products.size(), Matchers.is(1));
         MatcherAssert.assertThat(

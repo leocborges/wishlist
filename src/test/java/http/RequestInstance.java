@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
  */
 public final class RequestInstance {
 
-    private static final Duration TIMEOUT = Duration.ofSeconds(10);
+    private static final Duration TIMEOUT = Duration.ofSeconds(0);
 
     private final String api;
     private final RequestHeaders headers;
@@ -116,7 +116,6 @@ public final class RequestInstance {
     private HttpRequest.Builder defaultPart(final String path) {
         final HttpRequest.Builder builder = HttpRequest.newBuilder()
             .uri(URI.create(this.api.concat(path)))
-            .timeout(RequestInstance.TIMEOUT)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         this.headers.headers().forEach(builder::header);
         return builder;

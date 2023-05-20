@@ -14,13 +14,8 @@ public final class RequestSteps implements En {
     /**
      * Ctor.
      * @param request Request instance.
-     * @param headers Headers instance.
      */
-    public RequestSteps(final RequestInstance request, final RequestHeaders headers) {
-        And(
-            "an authenticated user {string}",
-            (String user) -> headers.headers().put("x-user", user)
-        );
+    public RequestSteps(final RequestInstance request) {
         Given(
             "I call POST {string} with request body",
             (String path, String body) -> {

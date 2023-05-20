@@ -1,14 +1,14 @@
 package mongo;
 
-import org.picocontainer.Disposable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 
 /**
  * Mongo local instance.
  */
-public final class MongoInstance implements Disposable {
+public final class MongoInstance {
 
     private final MongoTemplate mongo;
 
@@ -22,12 +22,16 @@ public final class MongoInstance implements Disposable {
         this.cleanup();
     }
 
-    public void insert(String json, String collection) {
-        this.mongo.insert(json, collection);
+    public <T> T findById(final String entityId, Class<T> entityClass) {
+        return this.mongo.findById(entityId, entityClass);
     }
 
-    public boolean exists(final Query query, final String collection) {
-        return this.mongo.exists(query, null, collection);
+    public <T> void upsert(Query query, Update update, String collection) {
+        this.mongo.upsert(query, update, collection);
+    }
+
+    public <T> void insert(T json, String collection) {
+        this.mongo.insert(json, collection);
     }
 
     public void cleanup() {
@@ -35,13 +39,10 @@ public final class MongoInstance implements Disposable {
         this.drop("wishlists");
     }
 
-    @Override
-    public void dispose() {
-    }
-
     private void drop(final String collection) {
         if (this.mongo.collectionExists(collection)) {
             this.mongo.dropCollection(collection);
         }
     }
+
 }

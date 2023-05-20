@@ -1,6 +1,7 @@
 package com.wishlist.wishlists;
 
-import org.bson.types.ObjectId;
+import java.util.ArrayList;
+import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -11,37 +12,27 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public final class Wishlist {
 
     @Id
-    private ObjectId id;
-    private Long pid;
     private String user;
+    private List<Long> products = new ArrayList<>();
 
-    public Wishlist(final Long pid, final String user) {
+    public Wishlist(final String user) {
         this.user = user;
-        this.pid = pid;
-    }
-
-    public ObjectId getId() {
-        return id;
-    }
-
-    public void setId(final ObjectId id) {
-        this.id = id;
-    }
-
-    public Long getPid() {
-        return pid;
-    }
-
-    public void setPid(final Long pid) {
-        this.pid = pid;
     }
 
     public String getUser() {
-        return user;
+        return this.user;
     }
 
     public void setUser(final String user) {
         this.user = user;
+    }
+
+    public List<Long> getProducts() {
+        return this.products;
+    }
+
+    public void setProducts(final List<Long> products) {
+        this.products = products;
     }
 
 }
