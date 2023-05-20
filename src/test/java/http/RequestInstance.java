@@ -28,7 +28,7 @@ public final class RequestInstance {
      * @param headers Headers instance.
      */
     public RequestInstance(final RequestHeaders headers) {
-        this.api = "http://localhost:8080/api/v1";
+        this.api = "http://localhost:8081/api/v1";
         this.headers = headers;
         this.request = new AtomicReference<>();
         this.client = HttpClient.newBuilder().build();
