@@ -21,6 +21,9 @@ Feature: Wishlist fetch
     """
 
   Scenario: As an anonymous user, I CANNOT check if a product within wishlist
+
+    anonymous = missing x-user in the request header
+
     Given a list of products
       | id    | name     | price |
       | 83196 | mousepad | 50.99  |
@@ -36,7 +39,7 @@ Feature: Wishlist fetch
     }
     """
 
-  Scenario: As a user, an nonexistent product within the wishlist returns false
+  Scenario: As a user, a nonexistent product within the wishlist returns false
     Given an authenticated user "basdesgw"
     Then I call GET "/wishlists/999" it returns status 200 with JSON body
     """
