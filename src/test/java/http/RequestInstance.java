@@ -5,7 +5,6 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import org.springframework.http.HttpHeaders;
@@ -15,8 +14,6 @@ import org.springframework.http.MediaType;
  * Request instance used in ITs.
  */
 public final class RequestInstance {
-
-    private static final Duration TIMEOUT = Duration.ofSeconds(0);
 
     private final String api;
     private final RequestHeaders headers;
@@ -116,7 +113,6 @@ public final class RequestInstance {
     private HttpRequest.Builder defaultPart(final String path) {
         final HttpRequest.Builder builder = HttpRequest.newBuilder()
             .uri(URI.create(this.api.concat(path)))
-            .timeout(RequestInstance.TIMEOUT)
             .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
         this.headers.headers().forEach(builder::header);
         return builder;
